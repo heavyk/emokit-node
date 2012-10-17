@@ -26,7 +26,6 @@ int main(int argc, char **argv)
 		printf("CANNOT CONNECT\n");
 		return 1;
 	}
-	emokit_init_crypto(d);
 	while(1)
 	{
 		if(emokit_read_data(d) > 0)

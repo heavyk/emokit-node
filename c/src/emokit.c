@@ -21,6 +21,19 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define EMOKIT_SERIALSIZE 16
+
+#define EMOKIT_KEYSIZE 16 /* 128 bits == 16 bytes */
+
+#define EMOKIT_CONSUMER 0
+#define EMOKIT_RESEARCH 1
+
+/* ID of the feature report we need to identify the device
+   as consumer/research */
+#define EMOKIT_REPORT_ID 0
+#define EMOKIT_REPORT_SIZE 9
+
+
 const unsigned char F3_MASK[14] = {10, 11, 12, 13, 14, 15, 0, 1, 2, 3, 4, 5, 6, 7}; 
 const unsigned char FC6_MASK[14] = {214, 215, 200, 201, 202, 203, 204, 205, 206, 207, 192, 193, 194, 195};
 const unsigned char P7_MASK[14] = {84, 85, 86, 87, 72, 73, 74, 75, 76, 77, 78, 79, 64, 65};
@@ -81,8 +94,36 @@ int emokit_get_count(struct emokit_device* s, int device_vid, int device_pid)
 	return count;
 }
 
+int emokit_get_serial(hid_device *dev, char *str) {
+	int i;
+	wchar_t buf[EMOKIT_SERIALSIZE];
+	hid_get_serial_number_string(dev, buf, EMOKIT_SERIALSIZE*sizeof(wchar_t));
+	for (i=0; i < EMOKIT_SERIALSIZE; ++i) 
+		str[i] = (char) buf[i];
+}
+
+int emokit_identify_device(hid_device *dev) {
+	/* currently we check to see if the feature report matches the consumer
+	   model and if not we assume it's a research model.*/
+	int nbytes, i, dev_type = EMOKIT_CONSUMER;
+	char buf[EMOKIT_REPORT_SIZE];
+	char report_consumer[] = {0x00, 0xa0, 0xff, 0x1f, 0xff, 0x00, 0x00, 0x00, 0x00};
+	buf[0] = EMOKIT_REPORT_ID;
+	nbytes = hid_get_feature_report(dev, buf, sizeof(buf));
+	if (nbytes != EMOKIT_REPORT_SIZE) 
+		printf("warning: got feature report of length %d (expected length %d)\n", nbytes, EMOKIT_REPORT_SIZE);
+	for (i=0; i < nbytes; ++i) {
+		if (buf[i] != report_consumer[i]) {
+			dev_type = EMOKIT_RESEARCH;
+			break;
+		}
+	}
+	return dev_type;
+}
+
 int emokit_open(struct emokit_device* s, int device_vid, int device_pid, unsigned int device_index)
 {
+	int dev_type;
 	int count = 0;
 	struct hid_device_info* devices;
 	struct hid_device_info* device_cur;
@@ -107,7 +148,9 @@ int emokit_open(struct emokit_device* s, int device_vid, int device_pid, unsigne
 		return E_EMOKIT_NOT_OPENED;
 	}
 	s->_is_open = 1;
-	emokit_init_crypto(s);
+	dev_type = emokit_identify_device(s->_dev);
+	emokit_get_serial(s->_dev, s->serial);
+	emokit_init_crypto(s, dev_type);
 	return 0;
 }
 
@@ -127,8 +170,8 @@ int emokit_read_data(struct emokit_device* s)
 	return hid_read(s->_dev, s->raw_frame, 32);
 }
 
-EMOKIT_DECLSPEC int emokit_get_crypto_key(struct emokit_device* s, const unsigned char* feature_report) {
-	unsigned char type = 0x0; //feature[5];
+EMOKIT_DECLSPEC int emokit_get_crypto_key(struct emokit_device* s, int dev_type) {
+	unsigned char type = (unsigned char) dev_type;
 	int i;
 	type &= 0xF;
 	type = (type == 0);
@@ -176,9 +219,9 @@ EMOKIT_DECLSPEC int emokit_get_crypto_key(struct emokit_device* s, const unsigne
 	printf("\n");
 }
 
-EMOKIT_DECLSPEC int emokit_init_crypto(struct emokit_device* s) {
+EMOKIT_DECLSPEC int emokit_init_crypto(struct emokit_device* s, int dev_type) {
 	printf("Initializing crypto!\n");
-	emokit_get_crypto_key(s, "");
+	emokit_get_crypto_key(s, dev_type);
 
 	//libmcrypt initialization
 	s->td = mcrypt_module_open(MCRYPT_RIJNDAEL_128, NULL, MCRYPT_ECB, NULL);

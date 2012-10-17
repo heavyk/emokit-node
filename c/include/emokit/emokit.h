@@ -28,8 +28,6 @@
 #define EMOKIT_DECLSPEC __declspec(dllexport)
 #endif
 
-#define EMOKIT_KEYSIZE 16 /* 128 bits == 16 bytes */
-
 //prototypes so we don't need to include mcrypt at this level
 struct CRYPT_STREAM;
 typedef struct CRYPT_STREAM *MCRYPT;
@@ -56,13 +54,12 @@ struct emokit_frame {
 	char battery;
 };
 
+
 #ifdef __cplusplus
 extern "C"
 {
 #endif
-
 	struct emokit_device;
-	
 	/** 
 	 * Kills crypto context. Not meant for public calling, call
 	 * emokit_delete instead.
@@ -140,11 +137,11 @@ extern "C"
 	 * in device struct.
 	 *
 	 * @param s Initied, opened device
-	 * @param feature_report Feature report obtained from device
+	 * @param dev_type EMOKIT_CONSUMER or EMOKIT_RESEARCH
 	 *
 	 * @return 0 if successful, < 0 for error
 	 */
-	EMOKIT_DECLSPEC int emokit_get_crypto_key(struct emokit_device* s, const unsigned char* feature_report);
+	EMOKIT_DECLSPEC int emokit_get_crypto_key(struct emokit_device* s, int dev_type);
 #ifdef __cplusplus
 };
 #endif
