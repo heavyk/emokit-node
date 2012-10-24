@@ -153,16 +153,23 @@ extern "C"
 	EMOKIT_DECLSPEC int emokit_read_data(emokit_device* dev);
 
 	/** 
+	 * After Reading the data, populate the current_frame data structure.
+	 *
+	 * @param dev Opened device structure
+	 *
+	 * @return 0 if successful, < 0 for error
+	 */
+	EMOKIT_DECLSPEC int emokit_get_next_frame(emokit_device* s);
+
+	/** 
 	 * Given a feature report from the device, extract the serial and
 	 * create the crypto key. Exposed because why not. Sets "key" field
 	 * in device struct.
 	 *
 	 * @param s Initied, opened device
 	 * @param feature_report Feature report obtained from device
-	 *
-	 * @return 0 if successful, < 0 for error
 	 */
-	EMOKIT_DECLSPEC int emokit_get_crypto_key(emokit_device* s, const unsigned char* feature_report);
+	EMOKIT_DECLSPEC void emokit_get_crypto_key(emokit_device* s, int dev_type);
 #ifdef __cplusplus
 };
 #endif
