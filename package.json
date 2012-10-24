@@ -1,0 +1,29 @@
+{
+	"name": "emokit-node",
+	"version": "0.0.1",
+	"author": "Kenneth Bentley <mechanofthesequence@gmail.com>",
+	"description": "emotiv headset bindings for node",
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/heavyk/emokit-node.git"
+	},
+	"homepage": "http://github.com/heavyk/emokit-node",
+	"main": "./node/emo.js",
+	"keywords": [
+		"emotiv",
+		"brainwave",
+		"headset",
+		"eeg"
+	],
+	"engines": {
+		"node": ">=0.6.14"
+	},
+	"scripts": {
+		"install": "node-gyp rebuild"
+	},
+	"devDependencies": {
+		"shelljs": ">=0.0.6",
+		"livescript": "1.0.x"
+	},
+	"optionalDependencies": {}
+}
