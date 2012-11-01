@@ -21,6 +21,8 @@
 
 #include "emokit/emokit.h"
 
+ // http://openvibe.inria.fr/supported-hardware/
+
 const unsigned char F3_MASK[14] = {10, 11, 12, 13, 14, 15, 0, 1, 2, 3, 4, 5, 6, 7}; 
 const unsigned char FC6_MASK[14] = {214, 215, 200, 201, 202, 203, 204, 205, 206, 207, 192, 193, 194, 195};
 const unsigned char P7_MASK[14] = {84, 85, 86, 87, 72, 73, 74, 75, 76, 77, 78, 79, 64, 65};
@@ -166,8 +168,28 @@ EMOKIT_DECLSPEC int emokit_get_next_frame(emokit_device* s) {
 		s->current_frame.FC5 = get_level(s->raw_unenc_frame, FC5_MASK);
 
 		// testing code for signal levels... ignore for now
-		//if((s->raw_unenc_frame[0] >= 0 && s->raw_unenc_frame[0] <= 15) || (s->raw_unenc_frame[0] >= 64 && s->raw_unenc_frame[0] <= 80))
-		//	printf("%d LVL: %d\n", s->raw_unenc_frame[0], get_level_normal(s->raw_unenc_frame, 112, 119));
+		if((s->raw_unenc_frame[0] >= 0 && s->raw_unenc_frame[0] <= 15)/* || (s->raw_unenc_frame[0] >= 64 && s->raw_unenc_frame[0] <= 80)*/) { 
+			unsigned char lvl = (unsigned char) get_level_normal(s->raw_unenc_frame, 112, 119);
+			//printf("%d LVL: %d\n", s->raw_unenc_frame[0], lvl);
+			// TODO: this can probably be optimized to simply use an offset, but for now, I don't give a fuck
+			// TODO: verify that these actually correspond correctly to the sensors! I'm sure they don't...
+			switch(s->raw_unenc_frame[0]) {
+				case 0: s->current_frame.cq.F3 = lvl; break;
+				case 1: s->current_frame.cq.FC6 = lvl; break;
+				case 2: s->current_frame.cq.P7 = lvl; break;
+				case 3: s->current_frame.cq.T8 = lvl; break;
+				case 4: s->current_frame.cq.F7 = lvl; break;
+				case 5: s->current_frame.cq.F8 = lvl; break;
+				case 6: s->current_frame.cq.T7 = lvl; break;
+				case 7: s->current_frame.cq.P8 = lvl; break;
+				case 8: s->current_frame.cq.AF4 = lvl; break;
+				case 9: s->current_frame.cq.F4 = lvl; break;
+				case 10: s->current_frame.cq.AF3 = lvl; break;
+				case 11: s->current_frame.cq.O2 = lvl; break;
+				case 12: s->current_frame.cq.O1 = lvl; break;
+				case 13: s->current_frame.cq.FC5 = lvl; break;
+			}
+		}
 
 		s->current_frame.gyroX = s->raw_unenc_frame[29] - 102;
 		s->current_frame.gyroY = s->raw_unenc_frame[30] - 104;

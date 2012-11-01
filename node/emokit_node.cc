@@ -17,20 +17,40 @@ Handle<Value> MyFunction(const Arguments& args) {
 		obj->Set(String::NewSymbol("battery"), Number::New(d->current_frame.battery));
 		obj->Set(String::NewSymbol("gyroX"), Number::New(d->current_frame.gyroX));
 		obj->Set(String::NewSymbol("gyroY"), Number::New(d->current_frame.gyroY));
-		obj->Set(String::NewSymbol("F3"), Number::New(d->current_frame.F3));
-		obj->Set(String::NewSymbol("FC6"), Number::New(d->current_frame.FC6));
-		obj->Set(String::NewSymbol("P7"), Number::New(d->current_frame.P7));
-		obj->Set(String::NewSymbol("T8"), Number::New(d->current_frame.T8));
-		obj->Set(String::NewSymbol("F7"), Number::New(d->current_frame.F7));
-		obj->Set(String::NewSymbol("F8"), Number::New(d->current_frame.F8));
-		obj->Set(String::NewSymbol("T7"), Number::New(d->current_frame.T7));
-		obj->Set(String::NewSymbol("P8"), Number::New(d->current_frame.P8));
-		obj->Set(String::NewSymbol("AF4"), Number::New(d->current_frame.AF4));
-		obj->Set(String::NewSymbol("F4"), Number::New(d->current_frame.F4));
-		obj->Set(String::NewSymbol("AF3"), Number::New(d->current_frame.AF3));
-		obj->Set(String::NewSymbol("O2"), Number::New(d->current_frame.O2));
-		obj->Set(String::NewSymbol("O1"), Number::New(d->current_frame.O1));
-		obj->Set(String::NewSymbol("FC5"), Number::New(d->current_frame.FC5));
+		// signal data
+		Local<Object> signal = Object::New();
+		signal->Set(String::NewSymbol("F3"), Number::New(d->current_frame.F3));
+		signal->Set(String::NewSymbol("FC6"), Number::New(d->current_frame.FC6));
+		signal->Set(String::NewSymbol("P7"), Number::New(d->current_frame.P7));
+		signal->Set(String::NewSymbol("T8"), Number::New(d->current_frame.T8));
+		signal->Set(String::NewSymbol("F7"), Number::New(d->current_frame.F7));
+		signal->Set(String::NewSymbol("F8"), Number::New(d->current_frame.F8));
+		signal->Set(String::NewSymbol("T7"), Number::New(d->current_frame.T7));
+		signal->Set(String::NewSymbol("P8"), Number::New(d->current_frame.P8));
+		signal->Set(String::NewSymbol("AF4"), Number::New(d->current_frame.AF4));
+		signal->Set(String::NewSymbol("F4"), Number::New(d->current_frame.F4));
+		signal->Set(String::NewSymbol("AF3"), Number::New(d->current_frame.AF3));
+		signal->Set(String::NewSymbol("O2"), Number::New(d->current_frame.O2));
+		signal->Set(String::NewSymbol("O1"), Number::New(d->current_frame.O1));
+		signal->Set(String::NewSymbol("FC5"), Number::New(d->current_frame.FC5));
+		obj->Set(String::NewSymbol("signal"), signal);
+
+		Local<Object> cq = Object::New();
+		cq->Set(String::NewSymbol("F3"), Number::New(d->current_frame.cq.F3));
+		cq->Set(String::NewSymbol("FC6"), Number::New(d->current_frame.cq.FC6));
+		cq->Set(String::NewSymbol("P7"), Number::New(d->current_frame.cq.P7));
+		cq->Set(String::NewSymbol("T8"), Number::New(d->current_frame.cq.T8));
+		cq->Set(String::NewSymbol("F7"), Number::New(d->current_frame.cq.F7));
+		cq->Set(String::NewSymbol("F8"), Number::New(d->current_frame.cq.F8));
+		cq->Set(String::NewSymbol("T7"), Number::New(d->current_frame.cq.T7));
+		cq->Set(String::NewSymbol("P8"), Number::New(d->current_frame.cq.P8));
+		cq->Set(String::NewSymbol("AF4"), Number::New(d->current_frame.cq.AF4));
+		cq->Set(String::NewSymbol("F4"), Number::New(d->current_frame.cq.F4));
+		cq->Set(String::NewSymbol("AF3"), Number::New(d->current_frame.cq.AF3));
+		cq->Set(String::NewSymbol("O2"), Number::New(d->current_frame.cq.O2));
+		cq->Set(String::NewSymbol("O1"), Number::New(d->current_frame.cq.O1));
+		cq->Set(String::NewSymbol("FC5"), Number::New(d->current_frame.cq.FC5));
+		obj->Set(String::NewSymbol("cq"), cq);
 
 		return scope.Close(obj);
 	} else {

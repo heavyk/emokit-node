@@ -48,7 +48,7 @@ const static uint32_t EMOKIT_OUT_ENDPT = 0x02;
 const static uint32_t EMOKIT_IN_ENDPT  = 0x82;
 
 struct emokit_contact_quality {
-	char F3, FC6, P7, T8, F7, F8, T7, P8, AF4, F4, AF3, O2, O1, FC5;
+	unsigned char F3, FC6, P7, T8, F7, F8, T7, P8, AF4, F4, AF3, O2, O1, FC5;
 };
 
 struct emokit_frame {
